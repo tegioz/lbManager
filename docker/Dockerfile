@@ -18,6 +18,7 @@ RUN go get github.com/tegioz/lbManager
 # Setup lbManager runit service
 RUN mkdir -p /etc/service/lbManager
 ADD service_lbManager.sh /etc/service/lbManager/run
+RUN chmod +x /etc/service/lbManager/run
 
 # Use baseimage-docker init system
 CMD ["/sbin/my_init", "--quiet"]
