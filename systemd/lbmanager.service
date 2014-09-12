@@ -1,0 +1,13 @@
+[Unit]
+Description=LbManager
+After=docker.service
+Requires=docker.service
+
+[Service]
+User=core
+TimeoutStartSec=30m
+ExecStartPre=-/usr/bin/docker kill lbmanager
+ExecStartPre=-/usr/bin/docker rm lbmanager
+ExecStartPre=/usr/bin/docker pull quay.io/tegioz/lbmanager
+ExecStart=/usr/bin/docker run --name lbmanager -e ETCD_HOST=http://172.17.42.1:4001 -e AWS_ACCESS_KEY=XXX -e AWS_SECRET_KEY=XXX quay.io/tegioz/lbmanager
+ExecStop=/usr/bin/docker stop lbmanager
