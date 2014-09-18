@@ -2,7 +2,9 @@
 
 [![Docker Repository on Quay.io](https://quay.io/repository/tegioz/lbmanager/status "Docker Repository on Quay.io")](https://quay.io/repository/tegioz/lbmanager)
 
-**A simple load balancers presence manager for docker containers on top of etcd** that supports **AWS ELB** and **AWS Route53** dns based load balancing. The concept is pretty similar to the one described in [CoreOS fleet example deployment](https://coreos.com/docs/launching-containers/launching/fleet-example-deployment/), but using a centralized approach that aims to be more flexible and solid without requiring an extra container *per container* to manage their presence in the load balancer. Using it is really simple, specially if you are deploying your Docker containers in a [CoreOS](https://coreos.com/using-coreos/) cluster.
+**A simple load balancers presence manager for docker containers on top of etcd** that supports **AWS ELB** and **AWS Route53** dns based load balancing. lbManager is a service that manages your load balancers, adding/removing instances or ip addresses to/from them as new docker containers are deployed or stopped.
+
+The concept is pretty similar to the one described in [CoreOS fleet example deployment](https://coreos.com/docs/launching-containers/launching/fleet-example-deployment/), but using a centralized approach that aims to be more flexible and solid without requiring an extra container *per container* to manage their presence in the load balancer. Using it is really simple, specially if you are deploying your Docker containers in a [CoreOS](https://coreos.com/using-coreos/) cluster.
 
 ## Quick start
 
