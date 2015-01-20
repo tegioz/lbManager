@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/mitchellh/goamz/route53"
+	"log"
 )
 
 type Route53 struct {
@@ -13,7 +13,7 @@ type Route53 struct {
 
 // Setup Route53 dns based load balancer
 func (lb *Route53) Setup(meta map[string]string) {
-	fmt.Printf("-> ROUTE53:%s:%s:settingUpLoadBalancerState\n", meta["hostedZone"], meta["name"])
+	log.Printf("-> ROUTE53:%s:%s:settingUpLoadBalancerState\n", meta["hostedZone"], meta["name"])
 	lb.class = meta["class"]
 	lb.configKey = lb.ConfigPath + "/route53/" + meta["region"] + "/" + meta["hostedZone"] + "/" + meta["name"] + "/"
 	lb.hostedZone = meta["hostedZone"]
@@ -23,7 +23,7 @@ func (lb *Route53) Setup(meta map[string]string) {
 
 // Sync state of the load balancer instance with the real service
 func (lb *Route53) Sync() {
-	fmt.Printf("-- ROUTE53:%s:syncing:%s\n", lb.name, lb.members)
+	log.Printf("-- ROUTE53:%s:syncing:%s\n", lb.name, lb.members)
 	lb.ZoneUpdaterCh <- lb.getRecordSet()
 }
 

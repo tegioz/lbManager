@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/route53"
+	"log"
 	"regexp"
 )
 
@@ -65,7 +65,7 @@ func (m *Manager) readConfig() (readConfigCh chan *configEntry, doneCh chan bool
 	go func() {
 		response, err := m.etcdClient.Get(m.configPath, true, true)
 		if err != nil {
-			fmt.Println("Initial config not present. Monitoring changes on it from now on..")
+			log.Println("Initial config not present. Monitoring changes on it from now on..")
 		} else {
 			action := "readingConfig"
 			m.processNode(response.Node, action, readConfigCh)
@@ -177,7 +177,7 @@ func (m *Manager) processConfigEntry(configEntry *configEntry) {
 func (m *Manager) getZoneUpdaterCh(hostedZoneId string, region string) (zoneUpdaterCh chan *route53.Change) {
 	var exists bool
 	if zoneUpdaterCh, exists = m.zonesUpdatersChs[hostedZoneId]; !exists {
-		fmt.Printf("-> ZONEUPDATER:%s:settingUpZoneUpdater\n", hostedZoneId)
+		log.Printf("-> ZONEUPDATER:%s:settingUpZoneUpdater\n", hostedZoneId)
 		zoneUpdaterCh = make(chan *route53.Change)
 		zoneUpdater := &ZoneUpdater{
 			AwsClient:  route53.New(m.awsAuth, aws.Regions[region]),

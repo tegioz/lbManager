@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/elb"
+	"log"
 )
 
 type Elb struct {
@@ -14,7 +14,7 @@ type Elb struct {
 
 // Setup ELB based load balancer
 func (lb *Elb) Setup(meta map[string]string) {
-	fmt.Printf("-> ELB:%s:settingUpLoadBalancerState\n", meta["name"])
+	log.Printf("-> ELB:%s:settingUpLoadBalancerState\n", meta["name"])
 	lb.awsClient = elb.New(lb.AwsAuth, aws.Regions[meta["region"]])
 	lb.class = meta["class"]
 	lb.configKey = lb.ConfigPath + "/elb/" + meta["region"] + "/" + meta["name"] + "/"
@@ -33,14 +33,14 @@ func (lb *Elb) Sync() {
 
 // Add an instance to the AWS ELB
 func (lb *Elb) addInstanceToAwsElb(instance string) {
-	fmt.Printf("-> ELB:%s:addInstanceToAwsElb:%s\n", lb.name, instance)
+	log.Printf("-> ELB:%s:addInstanceToAwsElb:%s\n", lb.name, instance)
 	options := elb.RegisterInstancesWithLoadBalancer{
 		LoadBalancerName: lb.name,
 		Instances:        []string{instance},
 	}
 	_, err := lb.awsClient.RegisterInstancesWithLoadBalancer(&options)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -55,31 +55,31 @@ func (lb *Elb) getInstancesInAwsElb() (instances []string, err error) {
 		for _, instance := range resp.LoadBalancers[0].Instances {
 			instances = append(instances, instance.InstanceId)
 		}
-		fmt.Printf("-- ELB:%s:instancesInAws:%s\n", lb.name, instances)
+		log.Printf("-- ELB:%s:instancesInAws:%s\n", lb.name, instances)
 	}
 	return
 }
 
 // Remove an instance from the AWS ELB
 func (lb *Elb) removeInstanceFromAwsElb(instance string) {
-	fmt.Printf("<- ELB:%s:removeInstanceFromAwsElb:%s\n", lb.name, instance)
+	log.Printf("<- ELB:%s:removeInstanceFromAwsElb:%s\n", lb.name, instance)
 	options := elb.DeregisterInstancesFromLoadBalancer{
 		LoadBalancerName: lb.name,
 		Instances:        []string{instance},
 	}
 	_, err := lb.awsClient.DeregisterInstancesFromLoadBalancer(&options)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
 // Sync state of the load balancer instance with the real service
 func (lb *Elb) sync() {
 	for _ = range lb.syncCh {
-		fmt.Printf("-- ELB:%s:syncing:%s\n", lb.name, lb.members)
+		log.Printf("-- ELB:%s:syncing:%s\n", lb.name, lb.members)
 		instancesInAwsElb, err := lb.getInstancesInAwsElb()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			continue
 		}
 		for _, instance := range instancesInAwsElb {

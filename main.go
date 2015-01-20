@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/mitchellh/goamz/aws"
+	"log"
 )
 
 var config struct {
@@ -26,7 +26,7 @@ func main() {
 
 	awsAuth, err := aws.GetAuth(config.awsAccessKey, config.awsSecretKey)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	manager := &Manager{
@@ -34,6 +34,6 @@ func main() {
 		etcdClient: etcd.NewClient([]string{config.etcdHost}),
 		awsAuth:    awsAuth,
 	}
-	fmt.Println("Running load balancers manager...")
+	log.Println("Running load balancers manager...")
 	manager.Start()
 }

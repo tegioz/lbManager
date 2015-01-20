@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/mitchellh/goamz/aws"
+	"log"
 	"regexp"
 	"strings"
 )
@@ -24,13 +24,13 @@ type LB struct {
 // Add a member to the load balancer state
 func (lb *LB) AddMember(member string) {
 	if lb.class == "single" {
-		fmt.Printf("-> %s:%s:setSingleMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
+		log.Printf("-> %s:%s:setSingleMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
 		if lb.isLatestAdded(member) {
 			lb.members = []string{member}
 			lb.removeInvalidMembersFromConfig(member)
 		}
 	} else {
-		fmt.Printf("-> %s:%s:addMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
+		log.Printf("-> %s:%s:addMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
 		if p := lb.memberPosition(member); p == -1 {
 			lb.members = append(lb.members, member)
 		}
@@ -39,7 +39,7 @@ func (lb *LB) AddMember(member string) {
 
 // Remove a member from the load balancer state
 func (lb *LB) RemoveMember(member string) {
-	fmt.Printf("<- %s:%s:removeMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
+	log.Printf("<- %s:%s:removeMember:%s\n", strings.ToUpper(lb.Type), lb.name, member)
 	if p := lb.memberPosition(member); p > -1 {
 		lb.members = append(lb.members[:p], lb.members[p+1:]...)
 	}
@@ -56,7 +56,7 @@ func (lb *LB) SetClass(newClass string) {
 			lb.EtcdClient.Delete(lb.configKey+"single", true)
 		}
 		lb.members = []string{}
-		fmt.Printf("-> %s:%s:lbClassUpdatedTo:%s:resettingMembers:%s\n", strings.ToUpper(lb.Type), lb.name, lb.class, lb.members)
+		log.Printf("-> %s:%s:lbClassUpdatedTo:%s:resettingMembers:%s\n", strings.ToUpper(lb.Type), lb.name, lb.class, lb.members)
 	}
 }
 
@@ -95,7 +95,7 @@ func (lb *LB) removeInvalidMembersFromConfig(validMember string) {
 		if !strings.HasSuffix(child.Key, validMember) {
 			_, err := lb.EtcdClient.Delete(child.Key, false)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 		}
 	}
