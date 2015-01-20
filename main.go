@@ -17,8 +17,8 @@ var config struct {
 func init() {
 	flag.StringVar(&config.etcdHost, "etcd-host", "http://localhost:4001", "Etcd service address")
 	flag.StringVar(&config.etcdPath, "config-path", "/lbManager", "Configuration path")
-	flag.StringVar(&config.awsAccessKey, "aws-access-key", "YOUR_AWS_ACCESS_KEY", "AWS access key")
-	flag.StringVar(&config.awsSecretKey, "aws-secret-key", "YOUR_AWS_SECRET_KEY", "AWS secret key")
+	flag.StringVar(&config.awsAccessKey, "aws-access-key", "", "AWS access key")
+	flag.StringVar(&config.awsSecretKey, "aws-secret-key", "", "AWS secret key")
 }
 
 func main() {
