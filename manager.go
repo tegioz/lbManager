@@ -125,7 +125,10 @@ func (m *Manager) processNodeKey(key string, action string) (entry *configEntry)
 func (m *Manager) watchConfig() (watchConfigCh chan *etcd.Response) {
 	watchConfigCh = make(chan *etcd.Response)
 	go func() {
-		m.etcdClient.Watch(m.configPath, 0, true, watchConfigCh, nil)
+		_, err := m.etcdClient.Watch(m.configPath, 0, true, watchConfigCh, nil)
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 	return
 }
