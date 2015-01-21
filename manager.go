@@ -42,14 +42,14 @@ func (m *Manager) Start() {
 		select {
 		case configEntry := <-readConfigCh:
 			m.processConfigEntry(configEntry)
-		case response := <-watchConfigCh:
-			if response == nil {
+		case response, ok := <-watchConfigCh:
+			if !ok {
 				watchConfigCh = m.watchConfig()
-			} else {
-				configEntry := m.processNodeKey(response.Node.Key, response.Action)
-				if configEntry != nil {
-					m.processConfigEntry(configEntry)
-				}
+				continue
+			}
+			configEntry := m.processNodeKey(response.Node.Key, response.Action)
+			if configEntry != nil {
+				m.processConfigEntry(configEntry)
 			}
 		case <-readConfigDoneCh:
 			for _, lb := range m.loadBalancers {
