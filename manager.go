@@ -127,7 +127,11 @@ func (m *Manager) watchConfig() (watchConfigCh chan *etcd.Response) {
 	go func() {
 		_, err := m.etcdClient.Watch(m.configPath, 0, true, watchConfigCh, nil)
 		if err != nil {
-			log.Println(err)
+			// go-etcd produces this error when the watcher times out
+			// Just avoiding to print it very often, I don't like this (TODO)
+			if err.Error() != "unexpected end of JSON input" {
+				log.Println(err)
+			}
 		}
 	}()
 	return
