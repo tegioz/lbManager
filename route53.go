@@ -23,8 +23,12 @@ func (lb *Route53) Setup(meta map[string]string) {
 
 // Sync state of the load balancer instance with the real service
 func (lb *Route53) Sync() {
-	log.Printf("-- ROUTE53:%s:syncing:%s\n", lb.name, lb.members)
-	lb.ZoneUpdaterCh <- lb.getRecordSet()
+	if len(lb.members) > 0 {
+		log.Printf("-- ROUTE53:%s:syncing:%s\n", lb.name, lb.members)
+		lb.ZoneUpdaterCh <- lb.getRecordSet()
+	} else {
+		log.Printf("-- ROUTE53:%s:syncing:noMembersInLB\n", lb.name)
+	}
 }
 
 // Generate a record set change that represents current load balancer's state

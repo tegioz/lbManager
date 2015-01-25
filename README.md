@@ -67,6 +67,7 @@ ELB
 Route53
 
 	route53:ChangeResourceRecordSets
+	route53:ListResourceRecordSets
 
 ###  lbManager configuration
 
