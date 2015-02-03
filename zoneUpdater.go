@@ -42,7 +42,7 @@ func (z *ZoneUpdater) getResourceRecords(name string) (resourceRecords []string)
 	if err != nil {
 		log.Println(err)
 	} else {
-		if resp.Records[0].Name == name+"." {
+		if len(resp.Records) > 0 && resp.Records[0].Name == name+"." {
 			resourceRecords = resp.Records[0].Records
 		}
 	}
